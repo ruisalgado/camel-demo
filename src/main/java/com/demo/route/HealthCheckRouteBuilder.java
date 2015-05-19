@@ -17,7 +17,7 @@ public class HealthCheckRouteBuilder extends RouteBuilder {
                 .process(this::toTimeout)
                 .log(LoggingLevel.WARN, "processing timeout")
                 .to("direct:index")
-                .to("direct:notify");
+                .to("direct:alert");
 
         from("timer://ping?fixedRate=true&delay=0&period=10000")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.HEAD))
@@ -31,7 +31,12 @@ public class HealthCheckRouteBuilder extends RouteBuilder {
                         .process(this::toFailedCheck)
                         .log(LoggingLevel.WARN, "processing failed check")
                         .to("direct:index")
-                        .to("direct:notify");
+                        .to("direct:alert");
+
+        from("direct:index")
+            .marshal().json()
+            .to("log:com.demo.check.HealthChecks")
+            .to("elasticsearch://local?operation=INDEX&indexName=health&indexType=check");
     }
 
     private void toSuccessfulCheck(Exchange exchange) {

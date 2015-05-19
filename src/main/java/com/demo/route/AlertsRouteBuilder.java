@@ -6,7 +6,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.apache.camel.builder.script.ScriptBuilder.ruby;
 import static org.apache.camel.util.toolbox.AggregationStrategies.useLatest;
 
-public class NotificationRouteBuilder extends RouteBuilder {
+public class AlertsRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
@@ -17,7 +17,7 @@ public class NotificationRouteBuilder extends RouteBuilder {
                         .useExponentialBackOff()
         );
 
-        from("direct:notify")
+        from("direct:alert")
                 .aggregate(header(Headers.ENDPOINT_NAME), useLatest())
                     .completionSize(3)
                     .completionTimeout(MINUTES.toMillis(5))

@@ -15,7 +15,7 @@ public class HealthCheckApp {
         main.enableHangupSupport();
         main.addRouteBuilder(new HealthCheckRouteBuilder());
         main.addRouteBuilder(new AlertsRouteBuilder());
-        main.addRouteBuilder(new StatsRouteBuilder());
+        main.addRouteBuilder(new StatsRouteBuilder(elasticServer.getClient()));
         main.run(args);
 
         elasticServer.shutdown();
